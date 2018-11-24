@@ -31,7 +31,7 @@ bar	123
 func ExampleCSVReader() {
 	bs := bytes.NewBufferString(
 		`foo,42
-bar,223
+bar,123
 `)
 
 	r := dsvreader.NewCSV(bs)
