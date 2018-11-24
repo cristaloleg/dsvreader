@@ -1,10 +1,12 @@
-# tsvreader - fast reader for delimiter-separated data
+# dsvreader - fast reader for delimiter-separated data
 
 ## Features
 
-* Optimized for speed CSV, TSV, PSV readers.
+* Supports CSV, TSV, PSV.
+* Supports user defined delimiter.
+* Optimized for speed.
 * Based on [Aliaksandr Valialkin's TSVReader](https://github.com/valyala/tsvreader)
 
 ## Documentation
 
-See [these docs](https://godoc.org/github.com/valyala/tsvreader).
+See [these docs](https://godoc.org/github.com/cristaloleg/dsvreader).
