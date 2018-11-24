@@ -31,6 +31,14 @@ func NewPSV(r io.Reader) *Reader {
 	return &tr
 }
 
+// NewCustom returns new Reader that reads arbitrary delimiter-separated data from r.
+func NewCustom(sep byte, r io.Reader) *Reader {
+	var tr Reader
+	tr.sep = sep
+	tr.Reset(r)
+	return &tr
+}
+
 // Reader reads delimiter-separated data.
 //
 // Call NewCSV, NewTSV, NewPSV for creating new reader.
