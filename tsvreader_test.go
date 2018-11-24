@@ -13,7 +13,7 @@ import (
 
 func TestReaderSkipCol(t *testing.T) {
 	b := bytes.NewBufferString("foo\tbar2\t42\n")
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true")
 	}
@@ -43,7 +43,7 @@ func TestReaderSkipCol(t *testing.T) {
 
 func TestReaderHasCols(t *testing.T) {
 	b := bytes.NewBufferString("foo\t\n\n")
-	r := New(b)
+	r := NewTSV(b)
 	if r.HasCols() {
 		t.Fatalf("HasCols must return false before calling Next")
 	}
@@ -91,7 +91,7 @@ func TestReaderHasCols(t *testing.T) {
 
 func TestReaderResetError(t *testing.T) {
 	b := bytes.NewBufferString("foo\tbar\n\nbaz\n")
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true")
 	}
@@ -151,7 +151,7 @@ func TestReaderResetError(t *testing.T) {
 
 func TestReaderEmpty(t *testing.T) {
 	b := bytes.NewBufferString("")
-	r := New(b)
+	r := NewTSV(b)
 	if r.Next() {
 		t.Fatalf("Next must return false on empty data")
 	}
@@ -174,7 +174,7 @@ func TestReaderEmpty(t *testing.T) {
 
 func TestReaderNoNext(t *testing.T) {
 	b := bytes.NewBufferString("aaa\n")
-	r := New(b)
+	r := NewTSV(b)
 
 	n := r.Int()
 	if n != 0 {
@@ -192,7 +192,7 @@ func TestReaderNoNext(t *testing.T) {
 
 func TestReaderEmptyCol(t *testing.T) {
 	b := bytes.NewBufferString("\t\tfoobar\t\n")
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true")
 	}
@@ -231,7 +231,7 @@ func testReaderNoNewline(t *testing.T, s string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(s)
-	r := New(b)
+	r := NewTSV(b)
 	if r.Next() {
 		t.Fatalf("Next must return false when no newline; s: %q", s)
 	}
