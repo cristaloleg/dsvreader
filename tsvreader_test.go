@@ -1,4 +1,4 @@
-package tsvreader
+package dsvreader
 
 import (
 	"bytes"
@@ -282,7 +282,7 @@ func TestReaderReset(t *testing.T) {
 func TestReaderSingleRowBytesCol(t *testing.T) {
 	expectedS := "foobar"
 	b := bytes.NewBufferString(fmt.Sprintf("%s\n", expectedS))
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true on the first line. err: %v", r.Error())
 	}
@@ -323,7 +323,7 @@ func TestReaderSingleRowBytesCol(t *testing.T) {
 func TestReaderSingleRowIntCol(t *testing.T) {
 	expectedN := 12346
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true on the first line. err: %v", r.Error())
 	}
@@ -363,7 +363,7 @@ func TestReaderSingleRowIntCol(t *testing.T) {
 
 func TestReaderInvalidColType(t *testing.T) {
 	b := bytes.NewBufferString("foobar\n")
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true on the first line. err: %v", r.Error())
 	}
@@ -388,7 +388,7 @@ func TestReaderInvalidColType(t *testing.T) {
 
 func TestReaderNoMoreCols(t *testing.T) {
 	b := bytes.NewBufferString("aaa\n")
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true on the first line. err: %v", r.Error())
 	}
@@ -453,7 +453,7 @@ func TestReaderNoMoreCols(t *testing.T) {
 
 func TestReaderSingleRowMultiCols(t *testing.T) {
 	b := bytes.NewBufferString("foobar\t-42\t3\tbaz\n")
-	r := New(b)
+	r := NewTSV(b)
 
 	if !r.Next() {
 		t.Fatalf("Next must return true on the first line. err: %v", r.Error())
@@ -513,7 +513,7 @@ func TestReaderSingleRowMultiCols(t *testing.T) {
 
 func TestReaderUnreadColsSingle(t *testing.T) {
 	b := bytes.NewBufferString("foo\tbar\n")
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true")
 	}
@@ -547,7 +547,7 @@ func TestReaderUnreadColsSingle(t *testing.T) {
 
 func TestReaderUnreadColsAll(t *testing.T) {
 	b := bytes.NewBufferString("foo\tbar\n")
-	r := New(b)
+	r := NewTSV(b)
 	if !r.Next() {
 		t.Fatalf("Next must return true")
 	}
@@ -591,7 +591,7 @@ func testReaderMultiRowsBytesCol(t *testing.T, rows int) {
 	}
 
 	b := bytes.NewBufferString(strings.Join(ss, ""))
-	r := New(b)
+	r := NewTSV(b)
 	for i, expectedS := range expected {
 		if !r.Next() {
 			t.Fatalf("Next must return true when reading %q at row #%d", expectedS, i+1)
@@ -639,7 +639,7 @@ func testReaderMultiRowsIntCol(t *testing.T, rows int) {
 	}
 
 	b := bytes.NewBufferString(strings.Join(ss, ""))
-	r := New(b)
+	r := NewTSV(b)
 	for i, expectedN := range expected {
 		if !r.Next() {
 			t.Fatalf("Next must return true when reading %d at row #%d", expectedN, i+1)
@@ -689,7 +689,7 @@ func testReaderMultiRowsMultiCols(t *testing.T, rows int, cols int) {
 	}
 
 	b := bytes.NewBufferString(strings.Join(ss, ""))
-	r := New(b)
+	r := NewTSV(b)
 	testReaderMultiRowsCols(t, r, expected)
 }
 
@@ -719,7 +719,7 @@ func testReaderSlowSource(t *testing.T, rows, cols int) {
 	b := &slowSource{
 		s: []byte(strings.Join(ss, "")),
 	}
-	r := New(b)
+	r := NewTSV(b)
 	testReaderMultiRowsCols(t, r, expected)
 }
 
@@ -783,7 +783,7 @@ func testReaderUintSuccess(t *testing.T, expectedN uint) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint()
 	if n != expectedN {
@@ -796,7 +796,7 @@ func testReaderUintSuccess(t *testing.T, expectedN uint) {
 
 func TestReaderUintNegative(t *testing.T) {
 	b := bytes.NewBufferString("-123\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint()
 	if n != 0 {
@@ -824,7 +824,7 @@ func testReaderInt32Success(t *testing.T, expectedN int32) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Int32()
 	if n != expectedN {
@@ -844,7 +844,7 @@ func testReaderInt32TooBig(t *testing.T, s string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(s + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Int32()
 	if n != 0 {
@@ -870,7 +870,7 @@ func testReaderUint32Success(t *testing.T, expectedN uint32) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint32()
 	if n != expectedN {
@@ -883,7 +883,7 @@ func testReaderUint32Success(t *testing.T, expectedN uint32) {
 
 func TestReaderUint32Negative(t *testing.T) {
 	b := bytes.NewBufferString("-123\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint32()
 	if n != 0 {
@@ -901,7 +901,7 @@ func TestReaderUint32Negative(t *testing.T) {
 
 func TestReaderUint32TooBig(t *testing.T) {
 	b := bytes.NewBufferString(fmt.Sprintf("123%d\n", math.MaxUint32))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint32()
 	if n != 0 {
@@ -929,7 +929,7 @@ func testReaderInt16Success(t *testing.T, expectedN int16) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Int16()
 	if n != expectedN {
@@ -949,7 +949,7 @@ func testReaderInt16TooBig(t *testing.T, s string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(s + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Int16()
 	if n != 0 {
@@ -975,7 +975,7 @@ func testReaderUint16Success(t *testing.T, expectedN uint16) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint16()
 	if n != expectedN {
@@ -988,7 +988,7 @@ func testReaderUint16Success(t *testing.T, expectedN uint16) {
 
 func TestReaderUint16Negative(t *testing.T) {
 	b := bytes.NewBufferString("-123\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint16()
 	if n != 0 {
@@ -1006,7 +1006,7 @@ func TestReaderUint16Negative(t *testing.T) {
 
 func TestReaderUint16TooBig(t *testing.T) {
 	b := bytes.NewBufferString(fmt.Sprintf("123%d\n", math.MaxUint16))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint16()
 	if n != 0 {
@@ -1034,7 +1034,7 @@ func testReaderInt8Success(t *testing.T, expectedN int8) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Int8()
 	if n != expectedN {
@@ -1054,7 +1054,7 @@ func testReaderInt8TooBig(t *testing.T, s string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(s + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Int8()
 	if n != 0 {
@@ -1080,7 +1080,7 @@ func testReaderUint8Success(t *testing.T, expectedN uint8) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint8()
 	if n != expectedN {
@@ -1093,7 +1093,7 @@ func testReaderUint8Success(t *testing.T, expectedN uint8) {
 
 func TestReaderUint8Negative(t *testing.T) {
 	b := bytes.NewBufferString("-123\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint8()
 	if n != 0 {
@@ -1111,7 +1111,7 @@ func TestReaderUint8Negative(t *testing.T) {
 
 func TestReaderUint8TooBig(t *testing.T) {
 	b := bytes.NewBufferString(fmt.Sprintf("1%d\n", math.MaxUint8))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint8()
 	if n != 0 {
@@ -1139,7 +1139,7 @@ func testReaderInt64Success(t *testing.T, expectedN int64) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Int64()
 	if n != expectedN {
@@ -1159,7 +1159,7 @@ func testReaderInt64TooBig(t *testing.T, s string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(s + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Int64()
 	if n != 0 {
@@ -1185,7 +1185,7 @@ func testReaderUint64Success(t *testing.T, expectedN uint64) {
 	t.Helper()
 
 	b := bytes.NewBufferString(fmt.Sprintf("%d\n", expectedN))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint64()
 	if n != expectedN {
@@ -1198,7 +1198,7 @@ func testReaderUint64Success(t *testing.T, expectedN uint64) {
 
 func TestReaderUint64Negative(t *testing.T) {
 	b := bytes.NewBufferString("-123\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint64()
 	if n != 0 {
@@ -1216,7 +1216,7 @@ func TestReaderUint64Negative(t *testing.T) {
 
 func TestReaderUint64TooBig(t *testing.T) {
 	b := bytes.NewBufferString(fmt.Sprintf("123%d\n", uint64(math.MaxUint64)))
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	n := r.Uint64()
 	if n != 0 {
@@ -1249,7 +1249,7 @@ func testReaderFloat32Success(t *testing.T, f float32) {
 
 	s := fmt.Sprintf("%f\n", f)
 	b := bytes.NewBufferString(s)
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	f32 := r.Float32()
 	if f32 != f && !(math.IsNaN(float64(f32)) && math.IsNaN(float64(f))) {
@@ -1272,7 +1272,7 @@ func testReaderFloat32Error(t *testing.T, s string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(s + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	f32 := r.Float32()
 	if f32 != 0 {
@@ -1304,7 +1304,7 @@ func testReaderFloat64Success(t *testing.T, f float64) {
 
 	s := fmt.Sprintf("%f\n", f)
 	b := bytes.NewBufferString(s)
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	f64 := r.Float64()
 	if f64 != f && !(math.IsNaN(f64) && math.IsNaN(f)) {
@@ -1327,7 +1327,7 @@ func testReaderFloat64Error(t *testing.T, s string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(s + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	f64 := r.Float64()
 	if f64 != 0 {
@@ -1352,7 +1352,7 @@ func testReaderDateSuccess(t *testing.T, date string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(date + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	dt := r.Date()
 	if r.Error() != nil {
@@ -1390,7 +1390,7 @@ func testReaderDateFailure(t *testing.T, date string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(date + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	dt := r.Date()
 	if !dt.IsZero() {
@@ -1415,7 +1415,7 @@ func testReaderDateTimeSuccess(t *testing.T, datetime string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(datetime + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	dt := r.DateTime()
 	if r.Error() != nil {
@@ -1454,7 +1454,7 @@ func testReaderDateTimeFailure(t *testing.T, datetime string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(datetime + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	dt := r.DateTime()
 	if !dt.IsZero() {
@@ -1480,7 +1480,7 @@ func testReaderBytesUnescape(t *testing.T, before, after string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(before + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	bb := r.Bytes()
 	if r.Error() != nil {
@@ -1501,7 +1501,7 @@ func testReaderString(t *testing.T, before, after string) {
 	t.Helper()
 
 	b := bytes.NewBufferString(before + "\n")
-	r := New(b)
+	r := NewTSV(b)
 	r.Next()
 	s := r.String()
 	if r.Error() != nil {
