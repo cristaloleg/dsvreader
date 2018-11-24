@@ -1,4 +1,4 @@
-package tsvreader
+package dsvreader
 
 import (
 	"bytes"
@@ -22,7 +22,7 @@ func benchmarkReaderBytes(b *testing.B, rows, cols int) {
 	b.StopTimer()
 	bb := createBytesTSV(rows, cols)
 	br := bytes.NewReader(bb)
-	r := New(br)
+	r := NewTSV(br)
 	b.StartTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
@@ -61,7 +61,7 @@ func benchmarkReaderInt(b *testing.B, rows, cols int) {
 	b.StopTimer()
 	bb := createIntTSV(rows, cols)
 	br := bytes.NewReader(bb)
-	r := New(br)
+	r := NewTSV(br)
 	b.StartTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
@@ -100,7 +100,7 @@ func benchmarkReaderUint(b *testing.B, rows, cols int) {
 	b.StopTimer()
 	bb := createUintTSV(rows, cols)
 	br := bytes.NewReader(bb)
-	r := New(br)
+	r := NewTSV(br)
 	b.StartTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
