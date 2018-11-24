@@ -1,4 +1,4 @@
-package tsvreader
+package dsvreader
 
 import (
 	"bytes"
@@ -10,19 +10,36 @@ import (
 	"unsafe"
 )
 
-// New returns new Reader that reads TSV data from r.
-func New(r io.Reader) *Reader {
+// NewCSV returns new Reader that reads CSV data from r.
+func NewCSV(r io.Reader) *Reader {
 	var tr Reader
+	tr.sep = ','
 	tr.Reset(r)
 	return &tr
 }
 
-// Reader reads tab-separated data.
+// NewTSV returns new Reader that reads TSV data from r.
+func NewTSV(r io.Reader) *Reader {
+	var tr Reader
+	tr.sep = '\t'
+	tr.Reset(r)
+	return &tr
+}
+
+// NewPSV returns new Reader that reads PSV data from r.
+func NewPSV(r io.Reader) *Reader {
+	var tr Reader
+	tr.sep = '|'
+	tr.Reset(r)
+	return &tr
+}
+
+// Reader reads delimiter-separated data.
 //
-// Call New for creating new TSV reader.
+// Call NewCSV, NewTSV, NewPSV for creating new reader.
 // Call Next before reading the next row.
 //
-// It is expected that columns are separated by tabs while rows
+// It is expected that columns are separated by delimiter while rows
 // are separated by newlines.
 type Reader struct {
 	r    io.Reader
@@ -38,6 +55,7 @@ type Reader struct {
 	scratch []byte
 
 	err          error
+	sep          byte
 	needUnescape bool
 }
 
@@ -75,7 +93,7 @@ func (tr *Reader) ResetError() {
 //
 // An empty row doesn't contain columns.
 //
-// This function may be used if TSV stream contains rows with different
+// This function may be used if stream contains rows with different
 // number of colums.
 func (tr *Reader) HasCols() bool {
 	return len(tr.rowBuf) > 0 && tr.b != nil
@@ -640,7 +658,7 @@ func (tr *Reader) nextCol() ([]byte, error) {
 		return nil, fmt.Errorf("no more columns")
 	}
 
-	n := bytes.IndexByte(tr.b, '\t')
+	n := bytes.IndexByte(tr.b, tr.sep)
 	if n < 0 {
 		// last column
 		b := tr.b
