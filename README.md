@@ -1,4 +1,4 @@
-# tsvreader - fast reader for tab-separated data
+# tsvreader - fast reader for delimiter-separated data
 
 ## Features
 
