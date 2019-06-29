@@ -1,5 +1,7 @@
 # dsvreader - fast reader for delimiter-separated data
 
+Archived, see: [cristalhq/dsvreader](https://github.com/cristalhq/dsvreader)
+
 ## Features
 
 * Supports CSV, TSV, PSV.
